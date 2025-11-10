@@ -10,3 +10,7 @@ export const getTodos = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Unable to find data." })
   }
 }
+
+export const deleteTodo = async (req: Request, res: Response) => {
+
+}

@@ -3,15 +3,15 @@ import { Document } from "mongoose";
 
 export interface IUser extends Document {
   username: string;
-  passwordHash: string;
+  password: string;
   email: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const UserSchema: Schema = new Schema({
-  username: { type: String },
-  passwordHash: { type: String },
+  username: { type: String, require: true },
+  password: { type: String, require: true },
   email: { type: String }
 },
   {
