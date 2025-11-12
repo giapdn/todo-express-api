@@ -4,16 +4,18 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface ITodo extends Document {
   title: string;
   description?: string;
-  isComplete: boolean;
+  isCompleted: boolean;
+  userId: Schema.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const TodoSchema: Schema = new Schema(
   {
-    title: { type: String, require: true },
+    title: { type: String, required: true },
     description: { type: String },
-    isComplete: { type: Boolean, default: false }
+    isCompleted: { type: Boolean, default: false },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true }
   },
   {
     timestamps: true

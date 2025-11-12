@@ -23,13 +23,13 @@ export const login = async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
     if (!username || !password) return res.status(401).json({ message: "Invalid credentials." })
-    const user = await User.findOne({ username })
+    const user = await User.findOne({ username: username })
     if (!user) return res.status(401).json({ message: "User not found." })
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).json({ message: "Password or Username not match with any record in collection." })
 
     //generate token JWT
-    const token = jwt.sign({ id: user._id, username: user.username }, process.env.SECRET_KEY!, { expiresIn: "5m" })
+    const token = jwt.sign({ id: user._id, username: user.username }, process.env.SECRET_KEY!, { expiresIn: "10m" })
 
     //Trả token về phía client
     res.status(200).json({ message: "Logged in !", token, user: { id: user._id, username: user.username } })

@@ -7,7 +7,7 @@ import { logger } from "./middlewares/logger.middleware";
 import dotenv from "dotenv"
 dotenv.config()
 
-//use các api, thư viện khác
+//! use các api, thư viện khác
 const app = express();
 app.use(express.json());
 app.use(logger);
