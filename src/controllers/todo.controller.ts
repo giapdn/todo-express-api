@@ -6,13 +6,18 @@ import z from "zod";
 
 export const getTodos = async (req: Request, res: Response) => {
   const id = req.user!.id;
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 5;
+
+  const skip = (page - 1) * limit; //công thức tính phân trang
   const query = { userId: id }
   try {
-    const todos = await Todo.find(query);
-    if (!todos) {
-      return res.status(404).json({ message: "Todos not found." });
-    }
-    res.json([todos, req.user])
+    const [todos, total] = await Promise.all([
+      Todo.find(query).skip(skip).limit(limit),
+      Todo.countDocuments(query)
+    ])
+
+    res.json({ data: todos, page, limit, totalItem: total, totalPages: Math.ceil(total / limit) }) //Math.ceil làm tròn lên
   } catch (error: any) {
     console.error(error);
     res.status(500).json({ message: "Internal server error", error: error.message });
@@ -92,6 +97,26 @@ export const deleteTodo = async (req: Request, res: Response) => {
     if (result.deletedCount === 1) return res.status(200).json({ message: "Delete successfully." })
     else return res.status(404).json({ message: "No documents matched the query. Deleted 0 doc" })
 
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+}
+
+export const toggleTodo = async (req: Request, res: Response) => {
+  const todoId = req.params.id;
+  const userId = req.user!.id;
+  try {
+    const todo = await Todo.findOne({ _id: todoId, userId: userId });
+    if (!todo) {
+      return res.status(404).json({ message: "Todo not found" });
+    }
+    todo.isCompleted = !todo.isCompleted;
+    await todo.save()
+    return res.status(200).json({
+      message: "Todo updated",
+      todo,
+    });
   } catch (error: any) {
     console.error(error);
     res.status(500).json({ message: "Internal server error", error: error.message });

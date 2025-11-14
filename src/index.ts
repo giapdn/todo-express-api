@@ -10,11 +10,12 @@ dotenv.config()
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-  origin: process.env.ALLOWED_ORIGIN,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}))
+app.use(cors)
+// app.use(cors({
+//   origin: process.env.ALLOWED_ORIGIN,
+//   methods: ["GET", "POST", "PUT", "DELETE"],
+//   allowedHeaders: ["Content-Type", "Authorization"]
+// }))
 app.use(logger);
 //kết nối db
 connectDB();
@@ -22,7 +23,7 @@ connectDB();
 app.get("/", (req: Request, res: Response) => {
   res.json({ name: "Giáp" })
 })
-app.use("/api/todos", todoRoutes)
+app.use("/api", todoRoutes)
 app.use("/api/auth", authRoutes)
 
 //route fallback/default
@@ -33,5 +34,5 @@ app.use((req: Request, res: Response) => {
 //chạy server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 })
