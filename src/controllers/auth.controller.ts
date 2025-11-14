@@ -13,8 +13,9 @@ export const register = async (req: Request, res: Response) => {
     const user = new User({ username: username, password: hashed }) //tạo mới user
     await user.save(); //lưu user mới tạo
     res.status(201).json({ message: "user created successfully !" })
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error !" })
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 }
 
@@ -29,11 +30,12 @@ export const login = async (req: Request, res: Response) => {
     if (!isMatch) return res.status(401).json({ message: "Password or Username not match with any record in collection." })
 
     //generate token JWT
-    const token = jwt.sign({ id: user._id, username: user.username }, process.env.SECRET_KEY!, { expiresIn: "10m" })
+    const token = jwt.sign({ id: user._id, username: user.username }, process.env.SECRET_KEY!, { expiresIn: "1h" })
 
     //Trả token về phía client
     res.status(200).json({ message: "Logged in !", token, user: { id: user._id, username: user.username } })
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error." })
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 }
