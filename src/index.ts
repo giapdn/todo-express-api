@@ -10,7 +10,9 @@ dotenv.config()
 
 const app = express();
 app.use(express.json());
-app.use(cors)
+app.use(cors({
+  origin: "*"
+}))
 // app.use(cors({
 //   origin: process.env.ALLOWED_ORIGIN,
 //   methods: ["GET", "POST", "PUT", "DELETE"],
@@ -21,7 +23,7 @@ app.use(logger);
 connectDB();
 //router
 app.get("/", (req: Request, res: Response) => {
-  res.json({ name: "Giáp" })
+  res.status(200).json({ message: "API is running" })
 })
 app.use("/api", todoRoutes)
 app.use("/api/auth", authRoutes)
